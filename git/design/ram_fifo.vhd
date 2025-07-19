@@ -8,7 +8,7 @@ use work.RAM_definitions_PK.all;
 entity ram_fifo is
     generic (
         G_DATAWIDTH : natural := 8;
-        G_FIFODEPTH : natural := 8
+        G_FIFODEPTH : natural := 5
     );
     port (
         clk : in std_logic;
