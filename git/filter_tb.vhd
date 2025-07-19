@@ -1,49 +1,53 @@
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
+use IEEE.NUMERIC_STD.ALL;
 
 entity filter_tb is
---  Port ( );
 end filter_tb;
+
 
 architecture Behavioral of filter_tb is
 
 component filter is
-  generic (
-  depth: integer := 8
-  );
-  port ( 
-  clk: in std_logic;
-  reset: in std_logic;
-  in_byte: in std_logic_vector (depth - 1 downto 0);
-  medijana: out std_logic_vector (depth - 1 downto 0)
-  );
+    generic (sirina: integer := 8);
+    port (
+        clk: in std_logic;
+        reset: in std_logic;
+        in_byte: in std_logic_vector (7 downto 0);
+        dugme: in std_logic;
+        medijana: out std_logic_vector (7 downto 0)
+    );
 end component;
 
-   constant C_CLK_PERIOD: time := 8 ns;
-   constant G_DATAWIDTH : natural :=8;
-   signal clk_tb : std_logic :='1';
-   signal reset : std_logic :='0'; 
-   signal in_byte: std_logic_vector (7 downto 0);
-   signal medijana: std_logic_vector (7 downto 0);
-begin
+constant C_CLK_PERIOD: time := 8 ns;
+signal clk_tb:  std_logic := '1';
+signal reset:  std_logic;
+signal in_byte:  std_logic_vector (7 downto 0);
+signal dugme:  std_logic;
+signal medijana:  std_logic_vector (7 downto 0);
 
-   clk_tb<= not clk_tb after C_CLK_PERIOD/2;
+begin
 
 DUT: entity work.filter port map (
         clk => clk_tb,
         reset => reset,
         in_byte => in_byte,
-        medijana => medijana);
+        dugme => dugme,
+        medijana => medijana );
+
+clk_tb<= not clk_tb after C_CLK_PERIOD/2;
 
 STIMULUS: process is
 begin
-    reset<= '1';
-    wait for C_CLK_PERIOD; 
+    reset <= '1';
+    wait for C_CLK_PERIOD;
     reset <= '0';
-    wait for 20 * C_CLK_PERIOD;
-    
-    in_byte <= "00000000";
+    wait for 3*C_CLK_PERIOD;
+    dugme <= '1';
     wait for C_CLK_PERIOD;
+    dugme <= '0';
+    in_byte <= "00000000";
+    wait for C_CLK_PERIOD; 
     in_byte <= "00000001";
     wait for C_CLK_PERIOD;
     in_byte <= "00000010";
@@ -177,7 +181,7 @@ begin
     wait for C_CLK_PERIOD;
     in_byte <= "00000111";
     wait for C_CLK_PERIOD;
+    
     wait;
-end process;       
-
+end process;
 end Behavioral;
